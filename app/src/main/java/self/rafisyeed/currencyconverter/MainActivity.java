@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -25,12 +26,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     ArrayList<HashMap<String,Double>> currencylist;
     EditText amount;
     TextView result;
+    double aud,cad,jpy,hkd,gbp;
+    Spinner spinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,28 +44,36 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         currencylist = new ArrayList<HashMap<String, Double>>();
         amount = (EditText) findViewById(R.id.editText);
         result = (TextView) findViewById(R.id.result);
-        String url = "https://api.fixer.io/latest?base=USD";
-        Spinner spinner = (Spinner) findViewById(R.id.spinner);
+        String url = "http://api.fixer.io/latest?base=USD";
+        spinner = (Spinner) findViewById(R.id.spinner);
         List<String> categories = new ArrayList<String>();
+        categories.add("Select your currency");
         categories.add("AUD");
         categories.add("CAD");
         categories.add("GBP");
         categories.add("HKD");
         categories.add("JPY");
 
-        spinner.setOnItemSelectedListener(this);
+        spinner.post(new Runnable() {
+            @Override
+            public void run() {
+                spinner.setOnItemSelectedListener(MainActivity.this);
+            }
+        });
+
         ArrayAdapter spinnerAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item,categories);
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(spinnerAdapter);
 
         RequestQueue requestQueue = Volley.newRequestQueue(this);
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject jsonResponseObject) {
-                Log.d("response>>>>>>", jsonResponseObject.toString());
+                Log.d("response>>>>>>>>", jsonResponseObject.toString());
                 try{
-                    JSONObject baseObj = jsonResponseObject.getJSONObject("base");
-                    JSONObject rate = baseObj.getJSONObject("rates");
+
+                    JSONObject rate = jsonResponseObject.getJSONObject("rates");
                     Double AUD = rate.getDouble("AUD");
                     Double CAD = rate.getDouble("CAD");
                     Double GBP = rate.getDouble("GBP");
@@ -76,6 +88,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     currencylist.add(map);
 
                 }
+
                 catch (JSONException e){
                     e.printStackTrace();
                 }
@@ -88,34 +101,59 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             }
         });
         requestQueue.add(jsonObjectRequest);
+
+
     }
+
+
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        // On selecting a spinner item
+       //Log.d("",currencylist.toString());
+        // String item = parent.getItemAtPosition(position).toString();
+        // Showing selected spinner item
+        //Toast.makeText(parent.getContext(),"abrar" , Toast.LENGTH_LONG).show
 
-        double total = Double.parseDouble(amount.getText().toString());
+        aud = currencylist.get(0).get("AUD");
+       // cad = currencylist.get(1).get("CAD");
+       // gbp = currencylist.get(2).get("GBP");
+       // hkd = currencylist.get(3).get("HKD");
+       // jpy = currencylist.get(4).get("JPY");
+        double x = Double.parseDouble(amount.getText().toString());
+        double answer;
+
         switch (position){
-            case (1):
-                result.setText(Double.toString(aud*total));
+            case 0:
+                answer = x * aud;
+                result.setText(Double.toString(answer));
                 break;
-            case (2):
-                result.setText(Double.toString(cad*total));
+            case 1:
+                answer = x * cad;
+                result.setText(Double.toString(answer));
                 break;
-            case (3):
-                result.setText(Double.toString(gbp*total));
+            case 2:
+                answer = x * gbp;
+                result.setText(Double.toString(answer));
                 break;
-            case (4):
-                result.setText(Double.toString(hkd*total));
+            case 3:
+                answer = x * hkd;
+                result.setText(Double.toString(answer));
                 break;
-            case (5):
-                result.setText(Double.toString(jpy*total));
+            case 4:
+                answer = x * jpy;
+                result.setText(Double.toString(answer));
                 break;
-
         }
+
     }
+
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
 
     }
+
+
 }
+//google callback method
