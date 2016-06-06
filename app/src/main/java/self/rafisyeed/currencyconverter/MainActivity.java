@@ -22,6 +22,7 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -33,7 +34,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     ArrayList<HashMap<String,Double>> currencylist;
     EditText amount;
     TextView result;
-    double aud,cad,jpy,hkd,gbp;
     Spinner spinner;
 
     @Override
@@ -109,6 +109,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        double aud,cad,jpy,hkd,gbp;
+        DecimalFormat twodecimal = new DecimalFormat("0.00");
+
         // On selecting a spinner item
        //Log.d("",currencylist.toString());
         // String item = parent.getItemAtPosition(position).toString();
@@ -116,44 +119,34 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         //Toast.makeText(parent.getContext(),"abrar" , Toast.LENGTH_LONG).show
 
         aud = currencylist.get(0).get("AUD");
-       // cad = currencylist.get(1).get("CAD");
-       // gbp = currencylist.get(2).get("GBP");
-       // hkd = currencylist.get(3).get("HKD");
-       // jpy = currencylist.get(4).get("JPY");
-        double x = Double.parseDouble(amount.getText().toString());
-        double answer;
+        cad = currencylist.get(0).get("CAD");
+        gbp = currencylist.get(0).get("GBP");
+        hkd = currencylist.get(0).get("HKD");
+        jpy = currencylist.get(0).get("JPY");
 
         switch (position){
-            case 0:
-                answer = x * aud;
-                result.setText(Double.toString(answer));
-                break;
             case 1:
-                answer = x * cad;
-                result.setText(Double.toString(answer));
+                result.setText(twodecimal.format(Double.parseDouble(amount.getText().toString())* aud));
                 break;
             case 2:
-                answer = x * gbp;
-                result.setText(Double.toString(answer));
+                result.setText(twodecimal.format(Double.parseDouble(amount.getText().toString())* cad));
                 break;
             case 3:
-                answer = x * hkd;
-                result.setText(Double.toString(answer));
+                result.setText(twodecimal.format(Double.parseDouble(amount.getText().toString())* gbp));
                 break;
             case 4:
-                answer = x * jpy;
-                result.setText(Double.toString(answer));
+                result.setText(twodecimal.format(Double.parseDouble(amount.getText().toString())* hkd));
+                break;
+            case 5:
+                result.setText(twodecimal.format(Double.parseDouble(amount.getText().toString())* jpy));
                 break;
         }
 
     }
-
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
 
     }
 
-
 }
-//google callback method
